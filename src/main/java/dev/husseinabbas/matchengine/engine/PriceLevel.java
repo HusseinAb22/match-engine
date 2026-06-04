@@ -44,6 +44,13 @@ public class PriceLevel {
         if (first.isFilled()){
             this.pollFirst();
         }
-
+    }
+    public boolean remove(RestingOrder o ) {
+        boolean flag = false;
+        if (orders.remove(o)) {
+            totalVolume -= o.getRemainingQty();
+            flag = true;
+        }
+        return flag;
     }
 }
