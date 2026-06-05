@@ -1,9 +1,6 @@
 package dev.husseinabbas.matchengine.engine;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class OrderBook {
     private String symbol;
@@ -19,12 +16,12 @@ public class OrderBook {
         return symbol;
     }
 
-    public PriceLevel bestBid(){
-        return bids.firstEntry().getValue();
+    public Optional<PriceLevel> bestBid(){
+        return Optional.ofNullable(bids.firstEntry()).map(Map.Entry::getValue);
     }
 
-    public PriceLevel bestAsk(){
-        return asks.firstEntry().getValue();
+    public Optional<PriceLevel> bestAsk(){
+        return Optional.ofNullable(asks.firstEntry()).map(Map.Entry::getValue);
     }
 
     public void addResting(RestingOrder o ){
