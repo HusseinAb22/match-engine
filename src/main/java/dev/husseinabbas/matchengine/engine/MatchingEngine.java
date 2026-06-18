@@ -102,4 +102,9 @@ public class MatchingEngine {
         return this.match(book,o);
     }
 
+    public boolean cancel(String symbol, long orderId) {
+        OrderBook book = books.get(symbol);
+        if (book == null) return false;
+        return book.cancel(orderId);
+    }
 }
