@@ -44,4 +44,9 @@ public class OrderBook {
         }
         return removed;
     }
+
+    public void removeEmptyLevel(Side side, long price) {
+        NavigableMap<Long, PriceLevel> book = (side == Side.BUY) ? bids : asks;
+        if (book.get(price) != null && book.get(price).isEmpty()) book.remove(price);
+    }
 }
