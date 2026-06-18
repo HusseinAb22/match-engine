@@ -18,47 +18,18 @@ public class MatchingEngine {
         while(stopFlag){
             if (remaining >0){
                 switch (incomingOrder.side()){
-                    case Side.BUY:
+                    case Side.BUY: {
                         if (book.bestAsk().isEmpty()) {
                             stopFlag = false;
                             break;
                         }
-                        var ask_side = book.bestAsk().get();
-                        if(ask_side.getPrice()<= incomingOrder.price()){
-                            var resting = ask_side.peekFirst();
-                            var fillQty = Math.min(remaining,resting.getRemainingQty());
-                            ask_side.fill(fillQty);
-                            if (ask_side.isEmpty()) {
-                                book.removeEmptyLevel(resting.getSide(), ask_side.getPrice());
-                            }
-                            remaining -= fillQty;
-                            var trade = new Trade(
-                                    nextTradeId++,
-                                    book.getSymbol(),
-                                    resting.getPrice(),
-                                    fillQty,
-                                    resting.getId(),
-                                    incomingOrder.id(),
-                                    incomingOrder.side(),
-                                    clock.instant()
-                                    );
-                            trades.add(trade);
-                            break;
-                        }
-                        stopFlag = false;
-                        break;
-                    case Side.SELL:
-                        if (book.bestBid().isEmpty()) {
-                            stopFlag = false;
-                            break;
-                        }
-                        var bid_side = book.bestBid().get();
-                        if(bid_side.getPrice()>= incomingOrder.price()) {
-                            var resting = bid_side.peekFirst();
-                            var fillQty = Math.min(remaining,resting.getRemainingQty());
-                            bid_side.fill(fillQty);
-                            if (bid_side.isEmpty()) {
-                                book.removeEmptyLevel(resting.getSide(), bid_side.getPrice());
+                        var askSide = book.bestAsk().get();
+                        if (askSide.getPrice() <= incomingOrder.price()) {
+                            var resting = askSide.peekFirst();
+                            var fillQty = Math.min(remaining, resting.getRemainingQty());
+                            askSide.fill(fillQty);
+                            if (askSide.isEmpty()) {
+                                book.removeEmptyLevel(resting.getSide(), askSide.getPrice());
                             }
                             remaining -= fillQty;
                             var trade = new Trade(
@@ -76,8 +47,37 @@ public class MatchingEngine {
                         }
                         stopFlag = false;
                         break;
-
-
+                    }
+                    case Side.SELL: {
+                        if (book.bestBid().isEmpty()) {
+                            stopFlag = false;
+                            break;
+                        }
+                        var bidSide = book.bestBid().get();
+                        if (bidSide.getPrice() >= incomingOrder.price()) {
+                            var resting = bidSide.peekFirst();
+                            var fillQty = Math.min(remaining, resting.getRemainingQty());
+                            bidSide.fill(fillQty);
+                            if (bidSide.isEmpty()) {
+                                book.removeEmptyLevel(resting.getSide(), bidSide.getPrice());
+                            }
+                            remaining -= fillQty;
+                            var trade = new Trade(
+                                    nextTradeId++,
+                                    book.getSymbol(),
+                                    resting.getPrice(),
+                                    fillQty,
+                                    resting.getId(),
+                                    incomingOrder.id(),
+                                    incomingOrder.side(),
+                                    clock.instant()
+                            );
+                            trades.add(trade);
+                            break;
+                        }
+                        stopFlag = false;
+                        break;
+                    }
                 }
             }
             else stopFlag = false;
